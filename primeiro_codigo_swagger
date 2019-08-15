@@ -1,0 +1,19 @@
+swagger: '2.0'
+  
+paths:
+  '/cliente':
+    post:
+      summary: Cadastra cliente
+      description: Cadastra um novo cliente
+      consumes: 
+        - application/json
+      produces: 
+        - application/json
+      operationid: cadastraCliente
+      responses:
+        201:
+          description: Cadastro efetuado com sucesso
+        400:
+          description: Reguisição invalida
+        500:
+          description: Erro interno no servidor
