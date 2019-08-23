@@ -8,7 +8,7 @@ host: localhost:8085
 basePath: /byteBank-Api/v1
 
 info:
-  version: 0.0.0
+  version: 1.0.0
   title: Bytebank Api
   description: Administra a movimentação bancaria do correntista e controla o acesso atravez de CPF e senha.
   termsOfService: http://localhost:8085/byteBank-Api/v1
@@ -32,21 +32,42 @@ paths:
         - in: body 
           name: cliente_ 
           schema: 
-            type: object 
-            properties: 
-              titular: 
-                type: string
-                example: Manasses Eugenio
+            $ref: '#/definitions/Cliente'
+            
       responses:
         201:
           description: Cadastro efetuado com sucesso
           schema: 
-            type: object 
-            properties: 
-              titular: 
-                type: string
-                example: Manasses Eugenio 
+            $ref: '#/definitions/Cliente'
+                
         400:
           description: Reguisição invalida
         500:
           description: Erro interno no servidor
+
+
+definitions:
+
+  Cliente:
+    type: object
+    properties: 
+      id: 
+        type: integer
+        format: int64
+        example: 123
+      titular: 
+        type: string
+        example: Manasses Eugenio
+      cpf:
+        type: string
+        example: 99999999999
+        maxLength: 11
+        minLength: 11
+      senha: 
+        type: string
+        format: password
+        example: senha123
+      conta:
+        type: array
+        items:
+          $ref: '#/definitions/Conta'
