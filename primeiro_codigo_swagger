@@ -28,8 +28,8 @@ consumes:
   - application/json
 produces:
   - application/json
-  
-tags: 
+
+tags:
   - name: Cliente
   - name: Conta
   - name: Extrato
@@ -38,7 +38,7 @@ tags:
 paths:
   '/cliente':
     post:
-      tags: 
+      tags:
         - Cliente
       summary: Cadastra Cliente
       description: Cadastra um novo cliente
@@ -101,41 +101,6 @@ paths:
         500:
           description: Erro no servidor
 
-  '/transacao/{codigo}':
-    put:
-      tags:
-        - Transacao
-      summary: Altera o valor da Transação
-      description: Altera o valor da transação existente na conta do cliente
-      security: 
-        - BasicAuth: []
-      operationId: alteraValorTransacao
-      parameters:
-        - in: path
-          name: codigo
-          required: true
-          type: integer
-          format: int64
-        - in: query
-          name: valor
-          type: number
-          format: double
-          required: true
-        - in: header
-          name: Authorization
-          type: string
-          required: true
-      responses:
-        204:
-          description: Alteração do valor efetuada com sucesso
-        400:
-          description: Requisição inválida
-        401:
-          description: Requisição não autorizada
-        500:
-          description: Erro no servidor
-  
-  
   '/extrato/{agencia}/{numero}/{digito}':
     get:
       tags:
@@ -176,22 +141,60 @@ paths:
           description: Requisição não autorizada
         500:
           description: Erro no servidor
-  
+
+  '/transacao':
+    post:
+      tags:
+        - Transacao
+      summary: Cadastra Transacao na Conta
+      description: Cadastra uma transacao de debito ou deposito na conta.
+      operationId: cadastraTransacao
+      security:
+        - BasicAuth: []
+      parameters:
+        - in: header
+          name: Authorization
+          type: string
+          required: true
+        - in: body
+          name: transacao
+          schema:
+            $ref: '#/definitions/Transacao'
+          required: true
+        - in: query
+          name: tipo
+          type: string
+          enum:
+          - debito
+          - deposito
+          required: true
+      responses:
+        '201':
+          description: Transação cadastrada com sucesso!
+          schema:
+            $ref: '#/definitions/Transacao'
+        '400':
+          description: Requisição inválida.
+        '401':
+          description: Requisição não autorizada.
+        '500':
+          description: Erro no servidor.
+
   '/transacao/{codigo}':
     put:
       tags:
         - Transacao
-      summary: Altera o valor da Transação
-      description: Altera o valor da transação existente na conta do cliente
-      security: 
-        - BasicAuth: []
+      summary: Altera a transação
+      description: Altera o valor da transação existente.
       operationId: alteraValorTransacao
+      security:
+        - BasicAuth: []
       parameters:
         - in: path
           name: codigo
-          required: true
           type: integer
           format: int64
+          required: true
         - in: query
           name: valor
           type: number
@@ -202,21 +205,23 @@ paths:
           type: string
           required: true
       responses:
-        204:
-          description: Alteração do valor efetuada com sucesso
-        400:
-          description: Requisição inválida
-        401:
-          description: Requisição não autorizada
-        500:
-          description: Erro no servidor
-  
+        '204':
+          description: Alteração efeturada com sucesso!
+        '400':
+          description: Requisição inválida.
+        '401':
+          description: Requisição não autorizada.
+        '404':
+          description: Registro não encontrado.
+        '500':
+          description: Erro no servidor.
+
     delete:
       tags:
         - Transacao
       summary: Exclui a transação
-      description: Exclusão da Transação existente na conta do cliente
-      operationId: excluirTransacao
+      description: Exclui a transação existente.
+      operationId: excluiTransacao
       security:
         - BasicAuth: []
       parameters:
@@ -230,15 +235,17 @@ paths:
           type: string
           required: true
       responses:
-        204:
-          description: Transação excluida com sucesso
-        400:
-          description: Requisição inválida
-        401:
-          description: Requisição não autorizada
-        500:
+        '204':
+          description: Exclusão efetuada com sucesso
+        '400':
+          description: Requisição inválida.
+        '401':
+          description: Requisição não autorizada.
+        '404':
+          description: Registro não encontrado.
+        '500':
           description: Erro no servidor
-    
+
 definitions:
   Cliente:
     type: object
@@ -285,11 +292,11 @@ definitions:
         example: 101.34
       cliente:
         $ref: '#/definitions/Cliente'
-      trasancao:
+      transacoes:
         type: array
         items:
           $ref: '#/definitions/Transacao'
-          
+
   Transacao:
     type: object
     properties:
@@ -298,24 +305,22 @@ definitions:
         format: int64
       tipo:
         type: string
-        enum: 
+        enum:
           - debito
           - deposito
-      valor: 
+      valor:
         type: number
         format: double
       data:
         type: string
         format: date-time
       conta:
-        type: array
-        items:
-          $ref: '#/definitions/Conta'
-          
+        $ref: '#/definitions/Conta'
+
   Extrato:
     type: object
     properties:
       transacoes:
         type: array
         items:
-          $ref: '#/definitions/Transacao'
+          $ref: '#/definitions/Transacao'      
