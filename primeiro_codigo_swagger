@@ -106,7 +106,7 @@ paths:
         - in: body
           name: transacao
           schema: 
-            $ref: "#/definitions/Trasancao"
+            $ref: "#/definitions/Transacao"
           required: true
         - in: query
           name: tipo
@@ -119,7 +119,46 @@ paths:
         201:
           description: Cadastro de transação efetuado com sucesso
           schema: 
-            $ref: "#/definitions/Trasancao"
+            $ref: "#/definitions/Transacao"
+        400:
+          description: Requisição inválida
+        401:
+          description: Requisição não autorizada
+        500:
+          description: Erro no servidor
+  
+  '/extrato/{agencia}/{numero}/{digito}':
+    get:
+      summary: Consulta Extrato
+      description: Consulta o extrato da conta do cliente.
+      operationId: consultaExtrato
+      security:
+        - BasicAuth: []
+      parameters:
+        - in: path
+          name: agencia
+          type: integer
+          format: int32
+          required: true
+        - in: path
+          name: numero
+          type: integer
+          format: int64
+          required: true
+        - in: path
+          name: digito
+          type: integer
+          format: int32
+          required: true
+        - in: header
+          name: Authorization
+          type: string
+          required: true
+      responses:
+        200:
+          description: Consulta de extrato efetuada com sucesso
+          schema:
+            $ref: '#/definitions/Extrato'
         400:
           description: Requisição inválida
         401:
@@ -185,5 +224,25 @@ definitions:
         type: integer
         format: int64
       tipo:
-        type: 
+        type: string
+        enum: 
+          - debito
+          - deposito
+      valor: 
+        type: number
+        format: double
+      data:
+        type: string
+        format: date-time
+      conta:
+        type: array
+        items:
+          $ref: '#/definitions/Conta'
           
+  Extrato:
+    type: object
+    properties:
+      transacoes:
+        type: array
+        items:
+          $ref: '#/definitions/Transacao'
