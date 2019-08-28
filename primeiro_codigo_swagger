@@ -28,10 +28,18 @@ consumes:
   - application/json
 produces:
   - application/json
+  
+tags: 
+  - name: Cliente
+  - name: Conta
+  - name: Extrato
+  - name: Transacao
 
 paths:
   '/cliente':
     post:
+      tags: 
+        - Cliente
       summary: Cadastra Cliente
       description: Cadastra um novo cliente
       operationId: cadastraCliente
@@ -52,6 +60,8 @@ paths:
 
   '/conta/{agencia}/{numero}/{digito}/saldo':
     get:
+      tags:
+        - Conta
       summary: Consulta Saldo
       description: Consulta o saldo da conta do cliente.
       operationId: consultaSaldo
@@ -90,36 +100,34 @@ paths:
           description: Requisição não autorizada
         500:
           description: Erro no servidor
-          
-  '/transacao':
-    post:
-      summary: Cadastra Transação na Conta
-      description: Cadastra uma transação efetuado de debito ou deposito na conta.
-      security:
+
+  '/transacao/{codigo}':
+    put:
+      tags:
+        - Transacao
+      summary: Altera o valor da Transação
+      description: Altera o valor da transação existente na conta do cliente
+      security: 
         - BasicAuth: []
-      operationId: cadastraTransacao
+      operationId: alteraValorTransacao
       parameters:
-        - in: header
-          type: string
-          name: Authorization
+        - in: path
+          name: codigo
           required: true
-        - in: body
-          name: transacao
-          schema: 
-            $ref: "#/definitions/Transacao"
-          required: true
+          type: integer
+          format: int64
         - in: query
-          name: tipo
+          name: valor
+          type: number
+          format: double
+          required: true
+        - in: header
+          name: Authorization
           type: string
-          enum: 
-            - debito
-            - deposito
           required: true
       responses:
-        201:
-          description: Cadastro de transação efetuado com sucesso
-          schema: 
-            $ref: "#/definitions/Transacao"
+        204:
+          description: Alteração do valor efetuada com sucesso
         400:
           description: Requisição inválida
         401:
@@ -127,8 +135,11 @@ paths:
         500:
           description: Erro no servidor
   
+  
   '/extrato/{agencia}/{numero}/{digito}':
     get:
+      tags:
+        - Extrato
       summary: Consulta Extrato
       description: Consulta o extrato da conta do cliente.
       operationId: consultaExtrato
@@ -165,7 +176,69 @@ paths:
           description: Requisição não autorizada
         500:
           description: Erro no servidor
-
+  
+  '/transacao/{codigo}':
+    put:
+      tags:
+        - Transacao
+      summary: Altera o valor da Transação
+      description: Altera o valor da transação existente na conta do cliente
+      security: 
+        - BasicAuth: []
+      operationId: alteraValorTransacao
+      parameters:
+        - in: path
+          name: codigo
+          required: true
+          type: integer
+          format: int64
+        - in: query
+          name: valor
+          type: number
+          format: double
+          required: true
+        - in: header
+          name: Authorization
+          type: string
+          required: true
+      responses:
+        204:
+          description: Alteração do valor efetuada com sucesso
+        400:
+          description: Requisição inválida
+        401:
+          description: Requisição não autorizada
+        500:
+          description: Erro no servidor
+  
+    delete:
+      tags:
+        - Transacao
+      summary: Exclui a transação
+      description: Exclusão da Transação existente na conta do cliente
+      operationId: excluirTransacao
+      security:
+        - BasicAuth: []
+      parameters:
+        - in: path
+          name: codigo
+          required: true
+          type: integer
+          format: int64
+        - in: header
+          name: Authorization
+          type: string
+          required: true
+      responses:
+        204:
+          description: Transação excluida com sucesso
+        400:
+          description: Requisição inválida
+        401:
+          description: Requisição não autorizada
+        500:
+          description: Erro no servidor
+    
 definitions:
   Cliente:
     type: object
