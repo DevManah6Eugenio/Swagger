@@ -206,7 +206,7 @@ paths:
           required: true
       responses:
         '204':
-          description: Alteração efeturada com sucesso!
+          description: Alteração efetuada com sucesso!
         '400':
           description: Requisição inválida.
         '401':
