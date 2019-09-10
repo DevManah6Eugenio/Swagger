@@ -1,0 +1,77 @@
+swagger: '2.0'
+
+schemes:
+  - http
+  - https
+
+host: localhost:8085
+basePath: /rel/v1
+
+info:
+  version: 1.0.0
+  title: Relatorio
+  description: Api para gerar Relatorios
+  termsOfService: http://localhost:8085/rel/v1/termo-uso
+  contact:
+    name: Suporte
+    url: http://localhost:8085/rel/v1/termo-uso
+    email: manasses.java@gmail.com
+
+consumes:
+  - application/json
+produces:
+  - application/json
+
+tags:
+  - name: Relatorio
+
+paths:
+  '/relatorio':
+    post:
+      tags:
+        - Relatorio
+      summary: Gerar Relatorio
+      description: metodo para gerar o relatorio
+      operationId: gerarRelatorio
+      parameters:
+        - in: body
+          name: relatorio
+          schema:
+            $ref: '#/definitions/Relatorio'
+      responses:
+        201:
+          description: relatorio gerado com sucesso
+          schema:
+            $ref: '#/definitions/Relatorio'
+        400:
+          description: Requisição inválida
+        500:
+          description: Erro interno no servidor
+
+definitions:
+  Relatorio:
+    type: object
+    properties:
+      relatorio:
+        type: string
+        format: int32
+        example: cliente
+      modelo:
+        type: integer
+        format: int64
+        example: 1
+      parametros:
+        $ref: '#/definitions/StringObjectMap'
+          
+  Parametro:
+    type: object
+    properties:
+      chave:
+        type: string
+      valor:
+        type: string
+
+  StringObjectMap:
+    type: object
+    additionalProperties:
+      $ref: "#/definitions/Parametro"
