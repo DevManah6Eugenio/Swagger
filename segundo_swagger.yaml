@@ -5,16 +5,16 @@ schemes:
   - https
 
 host: localhost:8085
-basePath: /rel/v1
+basePath: /rel/v2
 
 info:
   version: 1.0.0
   title: Relatorio
   description: Api para gerar Relatorios
-  termsOfService: http://localhost:8085/rel/v1/termo-uso
+  termsOfService: http://localhost:8085/rel/v2/termo-uso
   contact:
     name: Suporte
-    url: http://localhost:8085/rel/v1/termo-uso
+    url: http://localhost:8085/rel/v2/termo-uso
     email: manasses.java@gmail.com
 
 consumes:
@@ -42,7 +42,7 @@ paths:
         201:
           description: relatorio gerado com sucesso
           schema:
-            $ref: '#/definitions/Relatorio'
+            $ref: '#/definitions/Retorno'
         400:
           description: Requisição inválida
         500:
@@ -54,13 +54,12 @@ definitions:
     properties:
       relatorio:
         type: string
-        format: int32
         example: cliente
       modelo:
         type: integer
         format: int64
         example: 1
-      parametros:
+      parametro:
         $ref: '#/definitions/StringObjectMap'
           
   Parametro:
@@ -75,3 +74,22 @@ definitions:
     type: object
     additionalProperties:
       $ref: "#/definitions/Parametro"
+      
+  Erro:
+    type: object
+    properties:
+      codigo:
+        type: string
+      mensagem:
+        type: string
+    
+  Retorno:  
+    type: object
+    properties:
+      extensao:
+        type: string
+      relatorio:
+        type: string
+        format: binary
+      erro:
+        $ref: '#/definitions/Erro'
